@@ -2,6 +2,7 @@ import os
 import re
 import pathlib
 import tempfile
+import toml
 
 from cleo.helpers import option
 from poetry.console.application import Application
@@ -12,9 +13,7 @@ from poetry.plugins.application_plugin import ApplicationPlugin
 from poetry.core.masonry.builders.sdist import SdistBuilder
 from poetry.core.masonry.builders.builder import BuildIncludeFile
 
-
 MY_VERSION = None
-
 
 def set_new_version(app, new_version, io):
     global MY_VERSION
@@ -43,7 +42,7 @@ def my_handle(self):
 
 class MyBuildIncludeFile(BuildIncludeFile):
     def relative_to_source_root(self):
-        return pathlib.Path('pyproject.tml')
+        return pathlib.Path('pyproject.toml')
 
 
 def my_find_files_to_add(self, exclude_build=False):
@@ -51,18 +50,25 @@ def my_find_files_to_add(self, exclude_build=False):
     files2 = []
     for f in files:
         if f.path.name == 'pyproject.toml':
-            proj_txt = f.path.read_text()
-            ver_line = 'version="%s"' % MY_VERSION
-            proj_txt_patched = re.sub('^version.*=.*$', ver_line, proj_txt, flags=re.M)
-            fp = tempfile.NamedTemporaryFile("w", delete=False)
-            fp.write(proj_txt_patched)
-            fp.flush()
-            f = MyBuildIncludeFile(path=fp.name, project_root=self._path, source_root=self._path)
+            data = toml.load(f)
+            if MY_VERSION is not None:
+                data["tool"]["poetry"]["version"] = MY_VERSION
+                fp = tempfile.NamedTemporaryFile("w", delete=False)
+                toml.dump(data, fp)
+                f = MyBuildIncludeFile(path=fp.name, project_root=self._path, source_root=self._path)
+
+            # proj_txt = f.path.read_text()
+            # ver_line = 'version="%s"' % MY_VERSION
+            # proj_txt_patched = re.sub('^version.*=.*$', ver_line, proj_txt, flags=re.M)
+            # fp = tempfile.NamedTemporaryFile("w", delete=False)
+            # fp.write(proj_txt_patched)
+            # fp.flush()
+            # f = MyBuildIncludeFile(path=fp.name, project_root=self._path, source_root=self._path)
         files2.append(f)
     return files2
 
 
-class ArbitraryVersionPlugin(ApplicationPlugin):
+class VersionOverridePlugin(ApplicationPlugin):
     def activate(self, application):
         for cmd_cls in [BuildCommand, PublishCommand]:
             # add new --override-version option to a command
