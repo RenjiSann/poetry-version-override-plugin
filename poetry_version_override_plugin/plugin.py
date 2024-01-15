@@ -26,16 +26,15 @@ def set_new_version(app, new_version, io):
 
 def my_handle(self):
     # check if --override-version is used, if so then override project version
-    new_version = self.option("override-version")
-    if new_version:
+    # if --override-version is not used
+    # then check if PROJECT_OVERRIDE_VERSION environment variable is used
+    new_version = (
+        self.option("override-version")
+        or os.environ.get("PROJECT_OVERRIDE_VERSION")
+        or None
+    )
+    if new_version is not None:
         set_new_version(self.application, new_version, self.io)
-    else:
-        # if --override-version is not used
-        # then check if PROJECT_OVERRIDE_VERSION environment variable is used
-        # if so then override project version
-        new_version = os.environ.get("PROJECT_OVERRIDE_VERSION", None)
-        if new_version:
-            set_new_version(self.application, new_version, self.io)
 
     # run original handle method
     self.handle_orig()
