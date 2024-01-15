@@ -44,7 +44,8 @@ jobs:
           draft: false
           prerelease: steps.check-version.outputs.prerelease == 'true'
 
-      - name: Publish to PyPi
-        uses: JRubics/poetry-publish@v1.17
-        with:
-          pypi_token: ${{ secrets.PYPI_TOKEN }}
+      - name: Publish to PyPI
+        run: |
+          poetry config pypi-token.pypi ${{ secrets.PYPI_TOKEN }} \
+          && poetry publish -n
+
