@@ -6,8 +6,8 @@ authors = ["Michal Nowikowski <godfryd@gmail.com>"]
 license = "APACHE 2.0"
 readme = "README.md"
 packages = [{include = "poetry_version_override_plugin"}]
-homepage = "https://github.com/godfryd/poetry-version-override-plugin"
-repository = "https://github.com/godfryd/poetry-version-override-plugin"
+homepage = "https://github.com/RenjiSann/poetry-version-override-plugin"
+repository = "https://github.com/RenjiSann/poetry-version-override-plugin"
 keywords = ["poetry", "poetry-plugin", "plugin", "version", "version-override"]
 classifiers = [
     "Topic :: Software Development",
@@ -46,8 +46,6 @@ target-version = "py38"
 [tool.ruff.lint]
 fixable = ["ALL"]
 unfixable = []
-
-# Allow unused variables when underscore-prefixed.
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
 [tool.ruff.format]
