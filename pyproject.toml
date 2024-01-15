@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "poetry-version-override-plugin"
-version = "0.1.2"
+version = "0.1.3"
 description = "A Poetry plugin to override a version in a pyproject.toml from environment variable or build and publish command option"
 authors = ["Michal Nowikowski <godfryd@gmail.com>"]
 license = "APACHE 2.0"
@@ -18,6 +18,7 @@ classifiers = [
 [tool.poetry.dependencies]
 python = ">=3.8,<4"
 poetry = ">=1.2.0a1"
+toml = "^0.10.2"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.3"
