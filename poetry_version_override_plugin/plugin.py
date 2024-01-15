@@ -51,22 +51,15 @@ def my_find_files_to_add(self, exclude_build=False):
     files2 = []
     for f in files:
         if f.path.name == "pyproject.toml":
-            data = toml.load(f)
+            data = toml.load(f.path)
             if MY_VERSION is not None:
                 data["tool"]["poetry"]["version"] = MY_VERSION
-                fp = tempfile.NamedTemporaryFile("w", delete=False)
-                toml.dump(data, fp)
+                tmp = tempfile.NamedTemporaryFile("w", delete=False)
+                toml.dump(data, tmp)
                 f = MyBuildIncludeFile(
-                    path=fp.name, project_root=self._path, source_root=self._path
+                    path=tmp.name, project_root=self._path, source_root=self._path
                 )
 
-            # proj_txt = f.path.read_text()
-            # ver_line = 'version="%s"' % MY_VERSION
-            # proj_txt_patched = re.sub('^version.*=.*$', ver_line, proj_txt, flags=re.M)
-            # fp = tempfile.NamedTemporaryFile("w", delete=False)
-            # fp.write(proj_txt_patched)
-            # fp.flush()
-            # f = MyBuildIncludeFile(path=fp.name, project_root=self._path, source_root=self._path)
         files2.append(f)
     return files2
 
